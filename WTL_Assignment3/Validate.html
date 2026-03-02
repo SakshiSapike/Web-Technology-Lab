@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Registration Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        }
+
+        .container {
+            width: 400px;
+            margin: 80px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px gray;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Student Registration</h2>
+
+    <form onsubmit="return validateForm()">
+        <input type="text" id="name" placeholder="Enter Name">
+        <input type="text" id="mobile" placeholder="Enter Mobile Number">
+        <input type="email" id="email" placeholder="Enter Email">
+
+        <button type="submit">Register</button>
+    </form>
+</div>
+
+<script>
+
+function validateForm() {
+
+    var name = document.getElementById("name").value.trim();
+    var mobile = document.getElementById("mobile").value.trim();
+    var email = document.getElementById("email").value.trim();
+
+    if(name === "") {
+        alert("Name cannot be empty!");
+        return false;
+    }
+
+    var mobilePattern = /^[0-9]{10}$/;
+    if(!mobilePattern.test(mobile)) {
+        alert("Mobile number must be 10 digits!");
+        return false;
+    }
+
+    
+    if(email === "") {
+        alert("Email cannot be empty!");
+        return false;
+    }
+
+    alert("Registration Successful!");
+    return true;
+}
+
+</script>
+
+</body>
+</html>
