@@ -1,0 +1,116 @@
+<div class="container">
+  <h2>Student Registration</h2>
+
+  <form #registerForm="ngForm" (ngSubmit)="onRegister(registerForm)">
+
+    <!-- First & Last Name -->
+    <div class="row">
+      <div class="form-group">
+        <input type="text" name="firstName" ngModel required minlength="3"
+          placeholder="First Name" #firstName="ngModel">
+      </div>
+      <div class="form-group">
+        <input type="text" name="lastName" ngModel required minlength="3"
+          placeholder="Last Name" #lastName="ngModel">
+      </div>
+    </div>
+
+    <!-- Father & Mother Name -->
+    <div class="row">
+      <div class="form-group">
+        <input type="text" name="fatherName" ngModel required
+          placeholder="Father Name">
+      </div>
+      <div class="form-group">
+        <input type="text" name="motherName" ngModel required
+          placeholder="Mother Name">
+      </div>
+    </div>
+
+    <!-- Email & Mobile -->
+    <div class="row">
+      <div class="form-group">
+        <input type="email" name="email" ngModel required email
+          placeholder="Email" #email="ngModel">
+      </div>
+      <div class="form-group">
+        <input type="tel" name="mobileNumber" ngModel required
+          pattern="[0-9]{10}"
+          placeholder="Mobile Number" #mobile="ngModel">
+      </div>
+    </div>
+
+    <!-- Gender & DOB -->
+    <div class="row">
+      <div class="form-group">
+        <select name="gender" ngModel required>
+          <option value="" disabled selected>Select Gender</option>
+          <option>Male</option>
+          <option>Female</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <input type="date" name="dateOfBirth" ngModel required>
+      </div>
+    </div>
+
+    <!-- Address Full Width -->
+    <textarea name="address" ngModel required minlength="10"
+      placeholder="Full Address"></textarea>
+
+    <!-- City & State -->
+    <div class="row">
+      <div class="form-group">
+        <input type="text" name="city" ngModel required placeholder="City">
+      </div>
+      <div class="form-group">
+        <input type="text" name="state" ngModel required placeholder="State">
+      </div>
+    </div>
+
+    <!-- Pincode & Course -->
+    <div class="row">
+      <div class="form-group">
+        <input type="text" name="pincode" ngModel required
+          pattern="[0-9]{6}" placeholder="Pincode">
+      </div>
+      <div class="form-group">
+        <select name="course" ngModel required>
+          <option value="" disabled selected>Select Course</option>
+          <option>BCA</option>
+          <option>BSc</option>
+          <option>BCom</option>
+          <option>MCA</option>
+          <option>MBA</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Password & Confirm -->
+    <div class="row">
+      <div class="form-group">
+        <input type="password" name="password" ngModel required minlength="6"
+          placeholder="Password" #password="ngModel">
+      </div>
+      <div class="form-group">
+        <input type="password" name="confirmPassword" ngModel required
+          placeholder="Confirm Password" #confirmPassword="ngModel">
+      </div>
+    </div>
+
+    <!-- Password Match Error -->
+    <small *ngIf="confirmPassword.touched && confirmPassword.value !== password.value">
+      Passwords do not match
+    </small>
+
+    <button type="submit" [disabled]="registerForm.invalid">
+      Register
+    </button>
+
+  </form>
+
+  <p>Already have an account?
+    <a routerLink="/login">Login</a>
+  </p>
+</div>
