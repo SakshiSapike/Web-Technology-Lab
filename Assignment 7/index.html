@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Bookshop - Home</title>
+    <style>
+        :root {
+            --mint: #CFF5E7;
+            --seafoam: #A0E4CB;
+            --teal: #59C1BD;
+            --navy: #0D4C92;
+            --text: #17324d;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            font-family: Arial, sans-serif;
+            color: var(--text);
+            background: linear-gradient(135deg, var(--mint), var(--seafoam), var(--mint));
+        }
+
+        .card {
+            width: min(92vw, 720px);
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(13, 76, 146, 0.12);
+            border-radius: 28px;
+            padding: 42px;
+            box-shadow: 0 24px 50px rgba(13, 76, 146, 0.14);
+            text-align: center;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 88px;
+            height: 88px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--navy), var(--teal));
+            color: white;
+            font-size: 2.2rem;
+            margin-bottom: 18px;
+            box-shadow: 0 18px 30px rgba(13, 76, 146, 0.2);
+        }
+
+        h1 {
+            margin: 0 0 12px;
+            color: var(--navy);
+            font-size: clamp(2rem, 4vw, 3rem);
+        }
+
+        p {
+            margin: 0 auto 26px;
+            max-width: 520px;
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 24px;
+            border-radius: 999px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .primary {
+            background: var(--navy);
+            color: white;
+            box-shadow: 0 12px 22px rgba(13, 76, 146, 0.24);
+        }
+
+        .secondary {
+            background: var(--teal);
+            color: white;
+            box-shadow: 0 12px 22px rgba(89, 193, 189, 0.24);
+        }
+
+        .note {
+            margin-top: 20px;
+            font-size: 0.95rem;
+            color: rgba(23, 50, 77, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="badge">&#128218;</div>
+        <h1>Welcome to E-Bookshop</h1>
+        <p>Add new books, view the full catalog, and keep your store records updated from one simple page.</p>
+        <div class="actions">
+            <a href="books" class="btn primary">View / Add Books</a>
+            <a href="books" class="btn secondary">Open Book Form</a>
+        </div>
+        <div class="note">Theme colors: #CFF5E7, #A0E4CB, #59C1BD, #0D4C92</div>
+    </div>
+</body>
+</html>
