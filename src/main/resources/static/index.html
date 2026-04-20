@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Task Manager</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --panel: #111827;
+            --panel-2: #0b1220;
+            --border: rgba(148, 163, 184, 0.18);
+            --text: #e5e7eb;
+            --muted: #94a3b8;
+            --accent: #2563eb;
+            --accent-2: #38bdf8;
+            --success: #22c55e;
+            --warn: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background:
+                radial-gradient(circle at top, rgba(37, 99, 235, 0.25), transparent 40%),
+                linear-gradient(135deg, #08111f, #111827 55%, #0f172a);
+            color: var(--text);
+        }
+
+        .page {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 28px;
+        }
+
+        .hero {
+            background: rgba(17, 24, 39, 0.86);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 28px;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: rgba(37, 99, 235, 0.18);
+            color: #bfdbfe;
+            font-size: 13px;
+            letter-spacing: 0.02em;
+            margin-bottom: 14px;
+        }
+
+        h1 {
+            margin: 0 0 10px;
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            line-height: 1.05;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            max-width: 880px;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin: 0 0 22px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-top: 18px;
+        }
+
+        .card {
+            background: rgba(15, 23, 42, 0.92);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 18px;
+        }
+
+        .card h2 {
+            margin: 0 0 14px;
+            font-size: 1.15rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 0.88rem;
+            color: #cbd5e1;
+        }
+
+        input, select, textarea, button {
+            font: inherit;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            background: #0b1220;
+            border: 1px solid rgba(148, 163, 184, 0.24);
+            border-radius: 12px;
+            color: var(--text);
+            padding: 12px 14px;
+            outline: none;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--accent-2);
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.12);
+        }
+
+        textarea {
+            min-height: 92px;
+            resize: vertical;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        button {
+            border: 0;
+            border-radius: 12px;
+            padding: 12px 16px;
+            cursor: pointer;
+            color: white;
+            background: var(--accent);
+            transition: transform 0.15s ease, opacity 0.15s ease;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            opacity: 0.95;
+        }
+
+        .secondary {
+            background: #334155;
+        }
+
+        .success {
+            background: #166534;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px 10px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+            vertical-align: top;
+        }
+
+        th {
+            color: #cbd5e1;
+            font-weight: 600;
+        }
+
+        .status {
+            display: inline-flex;
+            padding: 5px 10px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .pending { background: rgba(245, 158, 11, 0.16); color: #fbbf24; }
+        .progress { background: rgba(37, 99, 235, 0.16); color: #60a5fa; }
+        .completed { background: rgba(34, 197, 94, 0.16); color: #4ade80; }
+
+        .muted {
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .message {
+            margin-top: 12px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            display: none;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .message.ok {
+            background: rgba(34, 197, 94, 0.12);
+            border: 1px solid rgba(34, 197, 94, 0.25);
+            color: #bbf7d0;
+        }
+
+        .message.err {
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            color: #fecaca;
+        }
+
+        .topline {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .pill {
+            background: rgba(148, 163, 184, 0.12);
+            border: 1px solid var(--border);
+            color: #dbeafe;
+            padding: 8px 12px;
+            border-radius: 999px;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 920px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <div class="hero">
+        <div class="badge">Spring Boot Employee Task Management</div>
+        <h1>Leader Task Dashboard</h1>
+        <p class="subtitle">
+            A simple one-page interface where a leader can create employees, assign tasks to team members,
+            and track progress in one place.
+        </p>
+
+        <div class="topline">
+            <div class="pill">App running on <strong>localhost:8081</strong></div>
+            <div class="pill">Database: <strong>H2 in-memory</strong></div>
+            <div class="pill">Use role <strong>LEADER</strong> for the manager</div>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h2>1. Create Employee</h2>
+                <div class="form-grid">
+                    <div class="field">
+                        <label for="empName">Name</label>
+                        <input id="empName" type="text" placeholder="Dr. Sharma">
+                    </div>
+                    <div class="field">
+                        <label for="empRole">Role</label>
+                        <select id="empRole">
+                            <option value="LEADER">LEADER</option>
+                            <option value="MEMBER" selected>MEMBER</option>
+                        </select>
+                    </div>
+                    <div class="field full">
+                        <label for="empEmail">Email</label>
+                        <input id="empEmail" type="email" placeholder="sharma@college.edu">
+                    </div>
+                </div>
+                <div class="actions">
+                    <button onclick="createEmployee()">Save Employee</button>
+                    <button class="secondary" onclick="loadEmployees()">Refresh List</button>
+                </div>
+                <div id="empMsg" class="message"></div>
+            </div>
+
+            <div class="card">
+                <h2>2. Assign Task</h2>
+                <div class="form-grid">
+                    <div class="field">
+                        <label for="leaderId">Leader ID</label>
+                        <input id="leaderId" type="number" min="1" placeholder="1">
+                    </div>
+                    <div class="field">
+                        <label for="employeeId">Employee ID</label>
+                        <input id="employeeId" type="number" min="1" placeholder="2">
+                    </div>
+                    <div class="field full">
+                        <label for="taskTitle">Task Title</label>
+                        <input id="taskTitle" type="text" placeholder="Exam Duty">
+                    </div>
+                    <div class="field full">
+                        <label for="taskDescription">Task Description</label>
+                        <textarea id="taskDescription" placeholder="Supervise room 204 during semester exam."></textarea>
+                    </div>
+                </div>
+                <div class="actions">
+                    <button onclick="assignTask()">Assign Task</button>
+                    <button class="secondary" onclick="loadTasksByLeader()">Track Leader Tasks</button>
+                </div>
+                <div id="taskMsg" class="message"></div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <div class="topline">
+                    <h2 style="margin:0;">Employees</h2>
+                    <div class="pill">Leader can assign only if role is LEADER</div>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Role</th>
+                            <th>Email</th>
+                        </tr>
+                        </thead>
+                        <tbody id="employeeTable">
+                        <tr><td colspan="4" class="muted">No employees loaded yet.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="topline">
+                    <h2 style="margin:0;">Task Tracking</h2>
+                    <div class="pill">Update task status directly from the page</div>
+                </div>
+                <div class="form-grid" style="margin-bottom: 10px;">
+                    <div class="field">
+                        <label for="trackLeaderId">Track by Leader ID</label>
+                        <input id="trackLeaderId" type="number" min="1" placeholder="1">
+                    </div>
+                    <div class="field">
+                        <label for="trackEmployeeId">Track by Employee ID</label>
+                        <input id="trackEmployeeId" type="number" min="1" placeholder="2">
+                    </div>
+                </div>
+                <div class="actions">
+                    <button onclick="loadTasksByLeader()">Show Leader Tasks</button>
+                    <button class="secondary" onclick="loadTasksByEmployee()">Show Employee Tasks</button>
+                    <button class="success" onclick="loadAllTasks()">Show All Tasks</button>
+                </div>
+                <div id="trackMsg" class="message"></div>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Assigned To</th>
+                            <th>Assigned By</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody id="taskTable">
+                        <tr><td colspan="6" class="muted">No tasks loaded yet.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function api(url, options = {}) {
+        const response = await fetch(url, {
+            headers: { 'Content-Type': 'application/json' },
+            ...options
+        });
+        if (!response.ok) {
+            const text = await response.text();
+            throw new Error(text || `Request failed with ${response.status}`);
+        }
+        const contentType = response.headers.get('content-type') || '';
+        if (contentType.includes('application/json')) {
+            return response.json();
+        }
+        return response.text();
+    }
+
+    function showMessage(id, text, ok = true) {
+        const el = document.getElementById(id);
+        el.textContent = text;
+        el.className = `message show ${ok ? 'ok' : 'err'}`;
+    }
+
+    function clearMessage(id) {
+        const el = document.getElementById(id);
+        el.textContent = '';
+        el.className = 'message';
+    }
+
+    function employeeName(emp) {
+        if (!emp) return '-';
+        return `${emp.name || '-'} (#${emp.id || '-'})`;
+    }
+
+    function statusClass(status) {
+        const value = (status || '').toLowerCase();
+        if (value.includes('complete')) return 'completed';
+        if (value.includes('progress')) return 'progress';
+        return 'pending';
+    }
+
+    async function createEmployee() {
+        clearMessage('empMsg');
+        try {
+            const payload = {
+                name: document.getElementById('empName').value.trim(),
+                role: document.getElementById('empRole').value,
+                email: document.getElementById('empEmail').value.trim()
+            };
+            if (!payload.name || !payload.email) {
+                throw new Error('Please fill employee name and email.');
+            }
+            await api('/employees', {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            });
+            showMessage('empMsg', 'Employee saved successfully.');
+            document.getElementById('empName').value = '';
+            document.getElementById('empEmail').value = '';
+            await loadEmployees();
+        } catch (e) {
+            showMessage('empMsg', e.message, false);
+        }
+    }
+
+    async function assignTask() {
+        clearMessage('taskMsg');
+        try {
+            const payload = {
+                leaderId: Number(document.getElementById('leaderId').value),
+                employeeId: Number(document.getElementById('employeeId').value),
+                title: document.getElementById('taskTitle').value.trim(),
+                description: document.getElementById('taskDescription').value.trim()
+            };
+            if (!payload.leaderId || !payload.employeeId || !payload.title) {
+                throw new Error('Please fill leader ID, employee ID, and task title.');
+            }
+            await api('/tasks/assign', {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            });
+            showMessage('taskMsg', 'Task assigned successfully.');
+            document.getElementById('taskTitle').value = '';
+            document.getElementById('taskDescription').value = '';
+            await loadTasksByLeader();
+        } catch (e) {
+            showMessage('taskMsg', e.message, false);
+        }
+    }
+
+    async function loadEmployees() {
+        try {
+            const employees = await api('/employees');
+            const table = document.getElementById('employeeTable');
+            if (!employees.length) {
+                table.innerHTML = '<tr><td colspan="4" class="muted">No employees found.</td></tr>';
+                return;
+            }
+            table.innerHTML = employees.map(emp => `
+                <tr>
+                    <td>${emp.id ?? '-'}</td>
+                    <td>${emp.name ?? '-'}</td>
+                    <td><span class="status ${String(emp.role || '').toLowerCase() === 'leader' ? 'completed' : 'progress'}">${emp.role ?? '-'}</span></td>
+                    <td>${emp.email ?? '-'}</td>
+                </tr>
+            `).join('');
+        } catch (e) {
+            document.getElementById('employeeTable').innerHTML = `<tr><td colspan="4" class="muted">${e.message}</td></tr>`;
+        }
+    }
+
+    async function renderTasks(tasks) {
+        const table = document.getElementById('taskTable');
+        if (!tasks.length) {
+            table.innerHTML = '<tr><td colspan="6" class="muted">No tasks found.</td></tr>';
+            return;
+        }
+
+        table.innerHTML = tasks.map(task => `
+            <tr>
+                <td>${task.id ?? '-'}</td>
+                <td>
+                    <div><strong>${task.title ?? '-'}</strong></div>
+                    <div class="muted">${task.description ?? ''}</div>
+                </td>
+                <td>${employeeName(task.assignedTo)}</td>
+                <td>${employeeName(task.assignedBy)}</td>
+                <td><span class="status ${statusClass(task.status)}">${task.status ?? 'Pending'}</span></td>
+                <td>
+                    <select id="status-${task.id}">
+                        <option value="Pending" ${task.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                        <option value="In Progress" ${task.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                        <option value="Completed" ${task.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                    </select>
+                    <div class="actions" style="margin-top:8px;">
+                        <button class="secondary" onclick="updateStatus(${task.id})">Update</button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    async function loadAllTasks() {
+        clearMessage('trackMsg');
+        try {
+            const tasks = await api('/tasks');
+            await renderTasks(tasks);
+            showMessage('trackMsg', 'Showing all tasks.');
+        } catch (e) {
+            showMessage('trackMsg', e.message, false);
+        }
+    }
+
+    async function loadTasksByLeader() {
+        clearMessage('trackMsg');
+        try {
+            const id = Number(document.getElementById('trackLeaderId').value || document.getElementById('leaderId').value);
+            if (!id) throw new Error('Please enter a leader ID.');
+            const tasks = await api(`/tasks/leader/${id}`);
+            await renderTasks(tasks);
+            showMessage('trackMsg', `Showing tasks assigned by leader #${id}.`);
+        } catch (e) {
+            showMessage('trackMsg', e.message, false);
+        }
+    }
+
+    async function loadTasksByEmployee() {
+        clearMessage('trackMsg');
+        try {
+            const id = Number(document.getElementById('trackEmployeeId').value || document.getElementById('employeeId').value);
+            if (!id) throw new Error('Please enter an employee ID.');
+            const tasks = await api(`/tasks/employee/${id}`);
+            await renderTasks(tasks);
+            showMessage('trackMsg', `Showing tasks assigned to employee #${id}.`);
+        } catch (e) {
+            showMessage('trackMsg', e.message, false);
+        }
+    }
+
+    async function updateStatus(taskId) {
+        try {
+            const status = document.getElementById(`status-${taskId}`).value;
+            await api(`/tasks/${taskId}/status`, {
+                method: 'PATCH',
+                body: JSON.stringify({ status })
+            });
+            showMessage('trackMsg', `Task #${taskId} updated to ${status}.`);
+            await loadAllTasks();
+        } catch (e) {
+            showMessage('trackMsg', e.message, false);
+        }
+    }
+
+    loadEmployees();
+    loadAllTasks();
+</script>
+</body>
+</html>
